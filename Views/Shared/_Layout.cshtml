@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Marina Motel Panel</title>
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body class="panel-body">
+    <header class="panel-header">
+        <div class="panel-header-inner">
+            <a asp-controller="Odalar" asp-action="Index" class="brand">
+                <img src="~/images/logo.png" alt="" class="brand-logo" /> Marina Motel — Panel
+            </a>
+            <nav>
+                <a asp-controller="Odalar" asp-action="Index">Odalar</a>
+                <a asp-controller="RezervasyonTalepleri" asp-action="Index">Rezervasyon Talepleri</a>
+                <a asp-controller="Kasa" asp-action="Index">Kasa</a>
+                <a asp-controller="Hatirlatmalar" asp-action="Index">Hatırlatmalar</a>
+                <a asp-controller="Yorumlar" asp-action="Yonet">Yorumlar</a>
+                <a asp-controller="Home" asp-action="Index" target="_blank">Siteyi Gör</a>
+                <form asp-controller="Account" asp-action="Logout" method="post" class="logout-form">
+                    <button type="submit">Çıkış</button>
+                </form>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        @RenderBody()
+    </main>
+</body>
+</html>

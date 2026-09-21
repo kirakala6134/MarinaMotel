@@ -1,0 +1,49 @@
+@model List<Yorum>
+@{ ViewData["Title"] = "Yorumlar"; }
+
+<div class="card">
+    <h2>Yeni Yorum Ekle</h2>
+    <p style="color:#666;">Sitede "Misafirlerimiz Ne Diyor?" bölümünde gösterilecek.</p>
+    <form asp-action="Ekle" method="post" style="display:flex; gap:10px; align-items:flex-end; flex-wrap:wrap;">
+        <div style="flex:1; min-width:160px;">
+            <label>Misafir Adı</label>
+            <input type="text" name="misafirAdi" placeholder="Örn: Elif K." required />
+        </div>
+        <div style="width:100px;">
+            <label>Puan</label>
+            <select name="puan">
+                <option value="5">5</option>
+                <option value="4">4</option>
+                <option value="3">3</option>
+            </select>
+        </div>
+        <div style="flex:2; min-width:260px;">
+            <label>Yorum Metni</label>
+            <input type="text" name="metin" required />
+        </div>
+        <button type="submit" class="btn turkuaz">+ Ekle</button>
+    </form>
+</div>
+
+<div class="card">
+    <h3>Mevcut Yorumlar</h3>
+    <table>
+        <thead><tr><th>Misafir</th><th>Puan</th><th>Metin</th><th></th></tr></thead>
+        <tbody>
+        @foreach (var y in Model)
+        {
+            <tr>
+                <td>@y.MisafirAdi</td>
+                <td>@(new string('★', y.Puan))</td>
+                <td>@y.Metin</td>
+                <td>
+                    <form asp-action="Sil" method="post" onsubmit="return confirm('Silinsin mi?');">
+                        <input type="hidden" name="id" value="@y.Id" />
+                        <button type="submit" class="btn kucuk kirmizi">Sil</button>
+                    </form>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>

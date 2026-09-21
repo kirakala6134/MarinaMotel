@@ -1,0 +1,123 @@
+@model Konaklama?
+@{
+    ViewData["Title"] = $"Oda {ViewBag.Oda.OdaNo}";
+    var oda = (Oda)ViewBag.Oda;
+}
+
+<a asp-action="Index" class="btn">← Odalara Dön</a>
+
+<div class="card">
+    <h2>Oda @oda.OdaNo — @oda.Tip <span style="font-weight:400; color:#888;">(@oda.GecelikFiyat.ToString("0.00") ₺/gece)</span></h2>
+
+    @if (oda.Durum == OdaDurumu.TemizlikBekliyor)
+    {
+        <p>Bu oda misafir çıkışı sonrası temizlik bekliyor.</p>
+        <form asp-action="TemizlikTamamlandi" method="post">
+            <input type="hidden" name="odaNo" value="@oda.OdaNo" />
+            <button type="submit" class="btn turkuaz">Temizlik Tamamlandı, Odayı Boşa Al</button>
+        </form>
+    }
+    else if (Model == null)
+    {
+        <p style="color:#666;">Oda şu an boş. Yeni bir misafiri check-in yapabilirsin.</p>
+        <form asp-action="CheckIn" method="post" id="checkInForm">
+            <input type="hidden" name="odaNo" value="@oda.OdaNo" />
+            <div class="form-grid">
+                <div>
+                    <label>Misafir Adı</label>
+                    <input type="text" name="misafirAdi" required />
+                </div>
+                <div>
+                    <label>Telefon (opsiyonel)</label>
+                    <input type="tel" name="telefon" />
+                </div>
+                <div>
+                    <label>Giriş Tarihi</label>
+                    <input type="date" id="ciGirisTarihi" name="girisTarihi" required />
+                </div>
+                <div>
+                    <label>Çıkış Tarihi</label>
+                    <input type="date" id="ciCikisTarihi" name="cikisTarihi" required />
+                </div>
+                <div>
+                    <label>Yetişkin Sayısı</label>
+                    <input type="number" id="ciYetiskin" name="yetiskinSayisi" min="1" max="10" value="2" />
+                </div>
+                <div>
+                    <label>Çocuk Sayısı (0-12 yaş)</label>
+                    <input type="number" id="ciCocuk" name="cocukSayisi" min="0" max="10" value="0" />
+                </div>
+            </div>
+
+            <div class="tahmini-fiyat-kutu" style="margin-top:16px;">
+                Tahmini Tutar: <span id="ciTahminiFiyat">—</span>
+            </div>
+
+            <button type="submit" class="btn turkuaz" style="margin-top:16px;">Check-in Yap</button>
+        </form>
+
+        <script>
+            const ciGecelikFiyat = @oda.GecelikFiyat.ToString(System.Globalization.CultureInfo.InvariantCulture);
+
+            function ciTahminiFiyatiHesapla() {
+                const giris = new Date(document.getElementById('ciGirisTarihi').value);
+                const cikis = new Date(document.getElementById('ciCikisTarihi').value);
+                const yetiskin = parseInt(document.getElementById('ciYetiskin').value) || 0;
+                const cocuk = parseInt(document.getElementById('ciCocuk').value) || 0;
+                const kutu = document.getElementById('ciTahminiFiyat');
+
+                let geceSayisi = Math.round((cikis - giris) / (1000 * 60 * 60 * 24));
+                if (isNaN(giris) || isNaN(cikis) || geceSayisi < 1) { kutu.textContent = '—'; return; }
+
+                const ekstraYetiskin = Math.max(0, yetiskin - 2);
+                const gecelikToplam = ciGecelikFiyat * (1 + 0.25 * ekstraYetiskin + 0.15 * cocuk);
+                const toplam = gecelikToplam * geceSayisi;
+                kutu.textContent = toplam.toLocaleString('tr-TR', { maximumFractionDigits: 0 }) + ' ₺ (' + geceSayisi + ' gece)';
+            }
+
+            ['ciGirisTarihi', 'ciCikisTarihi', 'ciYetiskin', 'ciCocuk'].forEach(id => {
+                document.getElementById(id).addEventListener('input', ciTahminiFiyatiHesapla);
+            });
+        </script>
+    }
+    else
+    {
+        <table>
+            <tr><td><b>Misafir</b></td><td>@Model.MisafirAdi</td></tr>
+            <tr><td><b>Telefon</b></td><td>@Model.Telefon</td></tr>
+            <tr><td><b>Kişi</b></td><td>@Model.YetiskinSayisi yetişkin@(Model.CocukSayisi > 0 ? $", {Model.CocukSayisi} çocuk" : "")</td></tr>
+            <tr><td><b>Giriş</b></td><td>@Model.GirisTarihi.ToString("dd.MM.yyyy")</td></tr>
+            <tr><td><b>Çıkış</b></td><td>@Model.CikisTarihi.ToString("dd.MM.yyyy")</td></tr>
+            <tr><td><b>Gece Sayısı</b></td><td>@Model.GeceSayisi</td></tr>
+            <tr><td><b>Gecelik (kişi sayısına göre)</b></td><td>@Model.GecelikFiyat.ToString("0.00") ₺</td></tr>
+            @if (Model.EkstraTutar > 0)
+            {
+                <tr><td><b>Ekstra</b></td><td>@Model.EkstraTutar.ToString("0.00") ₺ (@Model.EkstraAciklama)</td></tr>
+            }
+        </table>
+
+        <div class="toplam-kutu">
+            <span>Toplam Tutar</span>
+            <span>@Model.ToplamTutar.ToString("0.00") ₺</span>
+        </div>
+
+        <h3>Ekstra Ücret Ekle</h3>
+        <form asp-action="EkstraEkle" method="post" style="display:flex; gap:10px; align-items:flex-end; flex-wrap:wrap;">
+            <input type="hidden" name="odaNo" value="@oda.OdaNo" />
+            <div style="width:140px;">
+                <label>Tutar (₺)</label>
+                <input type="number" step="0.01" name="ekstraTutar" required />
+            </div>
+            <div style="flex:1; min-width:200px;">
+                <label>Açıklama</label>
+                <input type="text" name="ekstraAciklama" placeholder="Örn: Minibar" />
+            </div>
+            <button type="submit" class="btn">Ekle</button>
+        </form>
+
+        <form asp-action="CheckOut" method="post" onsubmit="return confirm('Check-out yapılsın mı? Oda temizlik bekliyor durumuna geçecek.');" style="margin-top:20px;">
+            <input type="hidden" name="odaNo" value="@oda.OdaNo" />
+            <button type="submit" class="btn kirmizi">Check-out Yap</button>
+        </form>
+    }
+</div>

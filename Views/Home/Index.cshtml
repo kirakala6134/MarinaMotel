@@ -1,0 +1,215 @@
+@model List<Yorum>
+@{
+    ViewData["Title"] = "Marina Motel";
+    Layout = null;
+    var odaTipleri = (List<string>)ViewBag.OdaTipleri;
+}
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Marina Motel — Armutlu, Fıstıklı</title>
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+
+    <nav class="site-nav">
+        <a href="#" class="brand"><img src="~/images/logo.png" alt="Marina Motel" style="height:38px;" /></a>
+        <div>
+            <a class="nav-link" href="#hakkimizda">Hakkımızda</a>
+            <a class="nav-link" href="#imkanlar">İmkanlarımız</a>
+            <a class="nav-link" href="#konum">Konum</a>
+            <a class="nav-link" href="#yorumlar">Yorumlar</a>
+            <a class="nav-link" href="#rezervasyon">Rezervasyon</a>
+        </div>
+    </nav>
+
+    <div class="hero">
+        <img src="~/images/logo.png" alt="Marina Motel" />
+        <h1>Marina Motel</h1>
+        <p>Armutlu, Fıstıklı'da denize sıfır, sakin ve samimi bir tatil deneyimi.</p>
+        <a href="#rezervasyon" class="btn turkuaz">Rezervasyon Al</a>
+    </div>
+
+    <section id="hakkimizda" class="section">
+        <div class="section-baslik-kutu"><h2>Hakkımızda</h2></div>
+        <p style="font-size:1.05em; line-height:1.8; text-align:center; max-width:750px; margin:0 auto;">
+            Marina Motel, Yalova'nın Armutlu ilçesine bağlı Fıstıklı'da, denize sıfır
+            konumuyla misafirlerine sakin ve samimi bir tatil sunuyor. Aile işletmesi
+            sıcaklığıyla yönetilen tesisimizde, şehrin gürültüsünden uzaklaşıp deniz
+            manzarası eşliğinde dinlenmek isteyenler için konforlu odalar hazırlıyoruz.
+        </p>
+
+        <div class="sahibi-kutu">
+            <div class="avatar">MBK</div>
+            <div>
+                <div style="font-weight:700; color:var(--lacivert);">Mustafa Burak Karahisar</div>
+                <div style="color:#666; font-size:0.9em;">Kurucu & İşletmeci</div>
+            </div>
+        </div>
+
+        <div class="section-baslik-kutu" style="margin-top:50px;"><h2 style="font-size:0.9em;">Bizi Kimler Keşfetti?</h2></div>
+        <div class="unlu-grid">
+            <div class="unlu-karti">
+                <div class="unlu-avatar">🕶️</div>
+                <p>"Buraya sonbaharda tekrar gelmeyi planlıyoruz, deniz manzarası inanılmazdı."</p>
+                <div class="unlu-isim">— Angalina Joile&Brad Pitt</div>
+            </div>
+            <div class="unlu-karti">
+                <div class="unlu-avatar">✨</div>
+                <p>"Beklediğimden çok daha huzurluydu, tam aradığımız kaçamak yeriydi."</p>
+                <div class="unlu-isim">— Sydney Sweeney</div>
+            </div>
+        </div>
+    </section>
+
+    <section id="imkanlar" class="section alt-renk">
+        <div class="section-baslik-kutu"><h2>İmkanlarımız</h2></div>
+        <div class="imkanlar-grid">
+            <div class="imkan-karti"><div class="ikon">🌊</div>Denize Sıfır Konum</div>
+            <div class="imkan-karti"><div class="ikon">🏊</div>Açık Havuz</div>
+            <div class="imkan-karti"><div class="ikon">📶</div>Ücretsiz WiFi</div>
+            <div class="imkan-karti"><div class="ikon">🚗</div>Otopark</div>
+            <div class="imkan-karti"><div class="ikon">🍳</div>Kahvaltı</div>
+            <div class="imkan-karti"><div class="ikon">❄️</div>Klimalı Odalar</div>
+        </div>
+    </section>
+
+    <section id="konum" class="section">
+        <div class="section-baslik-kutu"><h2>Konumumuz</h2></div>
+        <div style="text-align:center;">
+            <p style="font-size:1.1em;">Fıstıklı, Armutlu / Yalova</p>
+            <a class="btn" href="https://www.google.com/maps/search/?api=1&query=F%C4%B1st%C4%B1kl%C4%B1%2C%20Armutlu%2C%20Yalova" target="_blank">
+                Haritada Gör
+            </a>
+        </div>
+    </section>
+
+    <section id="yorumlar" class="section alt-renk">
+        <div class="section-baslik-kutu"><h2>Misafirlerimiz Ne Diyor?</h2></div>
+        <div class="yorum-grid">
+        @foreach (var yorum in Model)
+        {
+            <div class="yorum-karti">
+                <div class="yildizlar">@(new string('★', yorum.Puan))@(new string('☆', 5 - yorum.Puan))</div>
+                <p>"@yorum.Metin"</p>
+                <div class="misafir-adi">— @yorum.MisafirAdi</div>
+            </div>
+        }
+        </div>
+    </section>
+
+    <section id="rezervasyon" class="section">
+        <div class="section-baslik-kutu"><h2>Rezervasyon Al</h2></div>
+        <p style="text-align:center; color:#555;">
+            Formu doldur, ekibimiz seni en kısa sürede telefonla arayıp rezervasyonunu teyit etsin.
+        </p>
+
+        @if (TempData["RezervasyonBasarili"] != null)
+        {
+            <div class="basari-mesaji" style="max-width:600px; margin:16px auto;">
+                Talebin bize ulaştı! En kısa sürede seni arayacağız.
+            </div>
+        }
+
+        <div class="rezervasyon-form" style="max-width:700px; margin:20px auto 0;">
+            <form asp-controller="Home" asp-action="RezervasyonGonder" method="post" id="rezervasyonForm">
+                <div class="form-grid">
+                    <div>
+                        <label>Ad Soyad</label>
+                        <input type="text" name="adSoyad" required />
+                    </div>
+                    <div>
+                        <label>Telefon</label>
+                        <input type="tel" name="telefon" required />
+                    </div>
+                    <div>
+                        <label>Giriş Tarihi</label>
+                        <input type="date" id="girisTarihi" name="girisTarihi" required />
+                    </div>
+                    <div>
+                        <label>Çıkış Tarihi</label>
+                        <input type="date" id="cikisTarihi" name="cikisTarihi" required />
+                    </div>
+                    <div>
+                        <label>Oda Tipi</label>
+                        <select id="odaTipi" name="odaTipi">
+                            @foreach (var tip in odaTipleri)
+                            {
+                                <option value="@tip">@tip</option>
+                            }
+                        </select>
+                    </div>
+                    <div>
+                        <label>Yetişkin Sayısı</label>
+                        <input type="number" id="yetiskinSayisi" name="yetiskinSayisi" min="1" max="10" value="2" />
+                    </div>
+                    <div>
+                        <label>Çocuk Sayısı (0-12 yaş)</label>
+                        <input type="number" id="cocukSayisi" name="cocukSayisi" min="0" max="10" value="0" />
+                    </div>
+                </div>
+                <label>Not (opsiyonel)</label>
+                <textarea name="not" rows="3" placeholder="Özel bir isteğin varsa yazabilirsin"></textarea>
+
+                <div id="tahminiFiyatKutu" class="tahmini-fiyat-kutu">
+                    Tahmini Tutar: <span id="tahminiFiyatDeger">—</span>
+                    <div style="font-weight:400; font-size:0.75em; margin-top:4px; opacity:0.85;">
+                        (kesin fiyat resepsiyonumuz tarafından teyit edilecektir)
+                    </div>
+                </div>
+
+                <button type="submit" class="btn turkuaz" style="margin-top:16px;">Talebi Gönder</button>
+            </form>
+        </div>
+    </section>
+
+    <script>
+        // Oda tiplerine göre gecelik fiyatlar (sunucudan geliyor).
+        const odaFiyatlari = {
+            @foreach (var kv in (Dictionary<string, decimal>)ViewBag.OdaFiyatlari)
+            {
+                @:"@kv.Key": @kv.Value.ToString(System.Globalization.CultureInfo.InvariantCulture),
+            }
+        };
+
+        // Basit bir tahmini fiyatlandırma kuralı: gecelik fiyat 2 yetişkini kapsar.
+        // 2'den fazla her yetişkin için gecelik fiyatın %25'i, her çocuk için %15'i eklenir.
+        function tahminiFiyatiHesapla() {
+            const giris = new Date(document.getElementById('girisTarihi').value);
+            const cikis = new Date(document.getElementById('cikisTarihi').value);
+            const odaTipi = document.getElementById('odaTipi').value;
+            const yetiskin = parseInt(document.getElementById('yetiskinSayisi').value) || 0;
+            const cocuk = parseInt(document.getElementById('cocukSayisi').value) || 0;
+
+            const gececeFiyat = odaFiyatlari[odaTipi];
+            const kutu = document.getElementById('tahminiFiyatDeger');
+
+            if (!gececeFiyat || isNaN(giris) || isNaN(cikis)) { kutu.textContent = '—'; return; }
+
+            let geceSayisi = Math.round((cikis - giris) / (1000 * 60 * 60 * 24));
+            if (geceSayisi < 1) { kutu.textContent = '—'; return; }
+
+            const ekstraYetiskin = Math.max(0, yetiskin - 2);
+            const gecelikToplam = gececeFiyat
+                + (gececeFiyat * 0.25 * ekstraYetiskin)
+                + (gececeFiyat * 0.15 * cocuk);
+
+            const toplam = gecelikToplam * geceSayisi;
+            kutu.textContent = toplam.toLocaleString('tr-TR', { maximumFractionDigits: 0 }) + ' ₺ (' + geceSayisi + ' gece)';
+        }
+
+        ['girisTarihi', 'cikisTarihi', 'odaTipi', 'yetiskinSayisi', 'cocukSayisi'].forEach(id => {
+            document.getElementById(id).addEventListener('input', tahminiFiyatiHesapla);
+            document.getElementById(id).addEventListener('change', tahminiFiyatiHesapla);
+        });
+    </script>
+
+    <footer class="site-footer">
+        <p>Marina Motel — Fıstıklı, Armutlu / Yalova</p>
+        <a class="staff-link" asp-controller="Account" asp-action="Login">Personel Girişi</a>
+    </footer>
+
+</body>
+</html>

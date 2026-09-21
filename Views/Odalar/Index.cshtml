@@ -1,0 +1,40 @@
+@model List<Oda>
+@{ ViewData["Title"] = "Odalar"; }
+
+<div class="card">
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+        <h2 style="margin:0;">Odalar</h2>
+        <span class="canli-saat koyu" id="canliSaat"></span>
+    </div>
+    <div class="oda-grid" style="margin-top:16px;">
+    @foreach (var oda in Model)
+    {
+        var sinif = oda.Durum switch
+        {
+            OdaDurumu.Bos => "bos",
+            OdaDurumu.Dolu => "dolu",
+            _ => "temizlik"
+        };
+        var etiket = oda.Durum switch
+        {
+            OdaDurumu.Bos => "Boş",
+            OdaDurumu.Dolu => "Dolu",
+            _ => "Temizlik"
+        };
+        <a class="oda-kutu @sinif" asp-action="Detay" asp-route-odaNo="@oda.OdaNo">
+            @oda.OdaNo
+            <span>@oda.Tip</span>
+            <span>@etiket</span>
+        </a>
+    }
+    </div>
+</div>
+
+<script>
+    function canliSaatiGuncelle() {
+        const el = document.getElementById('canliSaat');
+        if (el) el.textContent = new Date().toLocaleString('tr-TR', { dateStyle: 'long', timeStyle: 'medium' });
+    }
+    canliSaatiGuncelle();
+    setInterval(canliSaatiGuncelle, 1000);
+</script>

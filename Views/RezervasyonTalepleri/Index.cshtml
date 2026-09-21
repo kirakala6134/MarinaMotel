@@ -1,0 +1,47 @@
+@model List<RezervasyonTalebi>
+@{ ViewData["Title"] = "Rezervasyon Talepleri"; }
+
+<div class="card">
+    <h2>Rezervasyon Talepleri</h2>
+    <p style="color:#666;">
+        Sitedeki formdan gelen talepler burada listeleniyor. Misafiri arayıp
+        teyit ettikten sonra "İşlendi" işaretle, sonra Odalar ekranından
+        check-in yaparak gerçek konaklamaya çevir.
+    </p>
+    @if (!Model.Any())
+    {
+        <p style="color:#666;">Henüz bir talep yok.</p>
+    }
+    else
+    {
+        <table>
+            <thead><tr><th>Ad Soyad</th><th>Telefon</th><th>Giriş</th><th>Çıkış</th><th>Oda Tipi</th><th>Kişi</th><th>Not</th><th></th><th></th></tr></thead>
+            <tbody>
+            @foreach (var t in Model)
+            {
+                <tr style="@(t.Islendi ? "opacity:0.5;" : "")">
+                    <td>@t.AdSoyad</td>
+                    <td>@t.Telefon</td>
+                    <td>@t.GirisTarihi.ToString("dd.MM.yyyy")</td>
+                    <td>@t.CikisTarihi.ToString("dd.MM.yyyy")</td>
+                    <td>@t.OdaTipi</td>
+                    <td>@t.YetiskinSayisi yetişkin@(t.CocukSayisi > 0 ? $", {t.CocukSayisi} çocuk" : "")</td>
+                    <td>@t.Not</td>
+                    <td>
+                        <form asp-action="IslendiIsaretle" method="post">
+                            <input type="hidden" name="id" value="@t.Id" />
+                            <button type="submit" class="btn kucuk">@(t.Islendi ? "Geri Al" : "İşlendi")</button>
+                        </form>
+                    </td>
+                    <td>
+                        <form asp-action="Sil" method="post" onsubmit="return confirm('Silinsin mi?');">
+                            <input type="hidden" name="id" value="@t.Id" />
+                            <button type="submit" class="btn kucuk kirmizi">Sil</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    }
+</div>
